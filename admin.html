@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Admin Chat Console</title>
+  <style>
+    body{font-family:Arial;padding:20px;}
+    #chat{border:1px solid #ccc;height:400px;overflow:auto;padding:10px;}
+    #msg{width:70%;}
+    #send{padding:6px;}
+  </style>
+</head>
+<body>
+  <h2>Admin Console</h2>
+  <div id="chat"></div>
+  <input id="msg" placeholder="Type message" />
+  <button id="send">Send</button>
+
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const sessionId = params.get('session');
+    const socket = io();
+
+    function add(m){
+      const c=document.getElementById('chat');
+      const e=document.createElement('div');
+      e.innerHTML='<b>'+m.sender+':</b> '+m.text;
+      c.appendChild(e);
+      c.scrollTop=c.scrollHeight;
+    }
+
+    socket.on('connect', ()=>socket.emit('join',{sessionId,role:'admin'}));
+    socket.on('message', add);
+    socket.on('history', msgs=>msgs.forEach(add));
+
+    document.getElementById('send').onclick=()=>{
+      const t=document.getElementById('msg').value;
+      socket.emit('message',{sessionId,sender:'Admin',text:t});
+      document.getElementById('msg').value='';
+    };
+  </script>
+</body>
+</html>
