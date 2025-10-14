@@ -7,6 +7,16 @@ const path = require("path");
 
 const app = express();
 app.use(cors());
+// Add this block after app.use(cors());
+app.use((req, res, next) => {
+    // This allows the browser's preflight check to pass
+    if (req.method === 'OPTIONS') {
+        res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
+        return res.status(204).send('');
+    }
+    next();
+});
+// End of new block
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
