@@ -71,6 +71,10 @@ io.on("connection", (socket) => {
     io.to(sessionId).emit("message", msg);
   });
 });
+// Root route for Render health check
+app.get("/", (req, res) => {
+  res.send("✅ Shopify Chat Server is Running");
+});
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => console.log("Server running on port", PORT));
